@@ -1,9 +1,10 @@
 <?php
 ?>
 <div id="app">
-    <h1><?php
-        echo "Dosya tipleri: ";
-        ?></h1>
+    <h1>
+        <?php
+            print_r($_);
+        ?>
+    </h1>
 
 </div>
-
