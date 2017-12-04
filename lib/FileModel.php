@@ -9,13 +9,16 @@ class FileModel {
 
     /**
      * @var array $fileMimeTypesInfo
+     * @var array $sortedFileSizes
      */
     private $fileMimeTypesInfo;
+    private $fileSortingAsSize;
     /**
      * FileModel constructor.
      */
     public function __construct(){
         $this->determineFileMimeTypesInfo(\OC::$server->getUserFolder());
+        $this->determineBiggestFiles(\OC::$server->getUserFolder());
     }
 
     /**
@@ -34,7 +37,30 @@ class FileModel {
             }
         }
     }
-
+    /**
+     * @param Folder $currentDirectory
+     */
+    public function determineBiggestFiles($currentDirectory) {
+        foreach ($currentDirectory->search('') as $item) {
+            if ($item->getMimetype() == 'http/unix-directory') {
+                $this->determineBiggestFiles($item);
+            } else {
+                $this->fileSortingAsSize[$item->getName()] = $item->getSize();
+            }
+        }
+    }
+    /**
+     * @return array
+     */
+    public function getFileSortingAsSize() {
+        return $this->fileSortingAsSize;
+    }
+    /**
+     * @param array $fileSortingAsSize
+     */
+    public function setFileSortingAsSize($fileSortingAsSize) {
+        $this->fileSortingAsSize = $fileSortingAsSize;
+    }
     /**
      * @return array
      */
@@ -49,3 +75,4 @@ class FileModel {
         $this->fileMimeTypesInfo = $fileMimeTypesInfo;
     }
 }
+

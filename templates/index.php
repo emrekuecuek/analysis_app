@@ -1,10 +1,3 @@
 <?php
-?>
-<div id="app">
-    <h1>
-        <?php
-            print_r($_);
-        ?>
-    </h1>
-
-</div>
+    script('analysis_app', 'main');
+    print_r($_);
