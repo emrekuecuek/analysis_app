@@ -8,7 +8,5 @@ class Application extends App {
     public function __construct(array $urlParams = array()) {
         parent::__construct('analysis_app', $urlParams);
         $container = $this->getContainer();
-
-
     }
 }
