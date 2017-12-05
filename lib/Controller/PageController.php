@@ -39,7 +39,7 @@ class PageController extends Controller {
         $templateResponse = new TemplateResponse(
             $this->appName,
             'index',
-            $this->fileModel->getFileSortingAsSize()
+            $this->fileModel->returnEverything()
         );
         return $templateResponse;
     }

@@ -16,10 +16,12 @@ class FileModel {
     /**
      * FileModel constructor.
      */
-    public function __construct(){
-        $this->determineFileMimeTypesInfo(\OC::$server->getUserFolder());
-        $this->determineBiggestFiles(\OC::$server->getUserFolder());
+    public function __construct() {
+      /*  $this->determineFileMimeTypesInfo(\OC::$server->getUserFolder());
+        $this->determineBiggestFiles(\OC::$server->getUserFolder());*/
+        $this->returnEverything(\OC::$server->getUserFolder());
     }
+
 
     /**
      * @param Folder $currentDirectory
@@ -37,6 +39,8 @@ class FileModel {
             }
         }
     }
+
+
     /**
      * @param Folder $currentDirectory
      */
@@ -49,18 +53,46 @@ class FileModel {
             }
         }
     }
+
+    /**
+     * @param Folder $currentDirectory
+     */
+    public function determineEveryting($currentDirectory){
+        foreach ($currentDirectory->search('') as $item) {
+            if ($item->getMimetype() == 'http/unix-directory') {
+                $this->determineEveryting($item);
+            } else {
+                $this->fileSortingAsSize[$item->getName()] = $item->getSize();
+                if(!isset($this->fileMimeTypesInfo[$item->getMimetype()])) {
+                    $this->fileMimeTypesInfo[$item->getMimetype()] = $item->getSize();
+                } else {
+                    $this->fileMimeTypesInfo[$item->getMimetype()] += $item->getSize();
+                }
+            }
+        }
+    }
+
+
+
+
+
+
     /**
      * @return array
      */
     public function getFileSortingAsSize() {
         return $this->fileSortingAsSize;
     }
+
+
     /**
      * @param array $fileSortingAsSize
      */
     public function setFileSortingAsSize($fileSortingAsSize) {
         $this->fileSortingAsSize = $fileSortingAsSize;
     }
+
+
     /**
      * @return array
      */
@@ -68,11 +100,20 @@ class FileModel {
         return $this->fileMimeTypesInfo;
     }
 
+
     /**
      * @param array $fileMimeTypesInfo
      */
     public function setFileMimeTypesInfo($fileMimeTypesInfo) {
         $this->fileMimeTypesInfo = $fileMimeTypesInfo;
     }
+
+    /**
+     * @return array
+     */
+    public function returnEverything() {
+        return array(array($this->getFileSortingAsSize()),array($this->getFileMimeTypesInfo()));
+    }
 }
+
 
