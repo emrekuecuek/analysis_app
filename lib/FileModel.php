@@ -3,47 +3,71 @@
 namespace OCA\Analysis_app;
 
 use OCP\Files\Folder;
+use OCP\Files\Node;
 
 class FileModel {
     /**
-     * @var array[][] $fileEverything
+     * @var Node[] $biggestFiles
      */
-    private $fileEverything;
+    private $biggestFiles;
+
+    /**
+     * @var array $mimeTypes
+     */
+    private $mimeTypes;
 
     /**
      * FileModel constructor.
      */
     public function __construct() {
-        $this->determineEverything(\OC::$server->getUserFolder());
+        $this->analyze(\OC::$server->getUserFolder());
     }
     /**
      * @param Folder $currentDirectory
      */
-    public function determineEverything($currentDirectory){
+    public function analyze($currentDirectory) {
         foreach ($currentDirectory->search('') as $item) {
-            if ($item->getMimetype() == 'http/unix-directory') {
-                $this->determineEverything($item);
-            } else {
-
-                if(count($this->fileEverything['fileList'])<10
-                    || $item->getSize()>array_values($this->fileEverything['fileList'][9])
-                ) {
-
-                    $this->fileEverything['fileList'][$item->getPath()]= $item->getSize();
-                    arsort($this->fileEverything['fileList']);
-                }
-                if(!isset($this->fileEverything['mimeList'][$item->getMimetype()])) {
-                    $this->fileEverything['mimeList'][$item->getMimetype()] = $item->getSize();
-                } else {
-                    $this->fileEverything['mimeList'][$item->getMimetype()] += $item->getSize();
-                }
+            if ($item instanceof Folder) {
+                $this->analyze($item);
+                continue;
             }
+            $this->pushToBiggestFilesIfNecessary($item);
+            $this->analyzeMimeType($item);
         }
     }
     /**
      * @return array
      */
-    public function returnEverything() {
-        return $this->fileEverything;
+    public function getAnalysisReport() {
+        return [
+            'biggest_files' => $this->biggestFiles,
+            'mime_types' => $this->mimeTypes
+        ];
+    }
+
+    /**
+     * @param Node $item
+     */
+    public function pushToBiggestFilesIfNecessary($item) {
+        if (count($this->biggestFiles) < 10
+            || $item->getSize() > $this->biggestFiles[9]->getSize()
+        ) {
+            $this->biggestFiles[9] = $item;
+            usort($this->biggestFiles, function (Node $a, Node $b) {
+                return $a->getSize() < $b->getSize();
+            });
+        }
+    }
+
+    /**
+     * @param Node $item
+     */
+    public function analyzeMimeType($item)
+    {
+        if (!isset($this->mimeTypes[$item->getMimetype()])) {
+            $this->mimeTypes[$item->getMimetype()] = $item->getSize();
+        } else {
+            $this->mimeTypes[$item->getMimetype()] += $item->getSize();
+        }
     }
 }
