@@ -27,7 +27,7 @@ class PageController extends Controller {
         IRequest $request,
         FileModel $fileModel
 
-    ){
+    ) {
         parent::__construct($appName, $request);
         $this->fileModel = $fileModel;
     }
@@ -39,7 +39,7 @@ class PageController extends Controller {
         $templateResponse = new TemplateResponse(
             $this->appName,
             'index',
-            $this->fileModel->getFileMimeTypesInfo()
+            $this->fileModel->getAnalysisReport()
         );
         return $templateResponse;
     }
