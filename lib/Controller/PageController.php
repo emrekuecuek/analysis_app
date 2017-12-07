@@ -10,6 +10,8 @@ use OCA\Analysis_app\FileModel;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
+
+
 class PageController extends Controller {
     /**
      * @var FileModel $fileModel;
@@ -27,7 +29,7 @@ class PageController extends Controller {
         IRequest $request,
         FileModel $fileModel
 
-    ){
+    ) {
         parent::__construct($appName, $request);
         $this->fileModel = $fileModel;
     }
@@ -38,10 +40,17 @@ class PageController extends Controller {
     public function index() {
         $templateResponse = new TemplateResponse(
             $this->appName,
-            'index',
-            $this->fileModel->getFileMimeTypesInfo()
+            'index'
         );
         return $templateResponse;
+    }
+
+    /**
+     * @NoCSRFRequired
+     * @return array
+     */
+    public function getInfo() {
+        return $this->fileModel->getAnalysisReport();
     }
 
 }

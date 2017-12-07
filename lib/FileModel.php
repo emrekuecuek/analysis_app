@@ -6,46 +6,68 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 
 class FileModel {
+    /**
+     * @var Node[] $biggestFiles
+     */
+    private $biggestFiles;
 
     /**
-     * @var array $fileMimeTypesInfo
+     * @var array $mimeTypes
      */
-    private $fileMimeTypesInfo;
+    private $mimeTypes;
+
     /**
      * FileModel constructor.
      */
-    public function __construct(){
-        $this->determineFileMimeTypesInfo(\OC::$server->getUserFolder());
+    public function __construct() {
+        $this->analyze(\OC::$server->getUserFolder());
     }
-
     /**
      * @param Folder $currentDirectory
      */
-    public function determineFileMimeTypesInfo($currentDirectory) {
-        foreach ($currentDirectory->search('') as $item){
-            if ($item->getMimetype() == 'http/unix-directory') {
-                $this->determineFileMimeTypesInfo($item);
-            } else {
-                if(!isset($this->fileMimeTypesInfo[$item->getMimetype()])) {
-                    $this->fileMimeTypesInfo[$item->getMimetype()] = $item->getSize();
-                } else {
-                    $this->fileMimeTypesInfo[$item->getMimetype()] += $item->getSize();
-                }
+    public function analyze($currentDirectory) {
+        foreach ($currentDirectory->search('') as $item) {
+            if ($item instanceof Folder) {
+                $this->analyze($item);
+                continue;
             }
+            $this->pushToBiggestFilesIfNecessary($item);
+            $this->analyzeMimeType($item);
+        }
+    }
+    /**
+     * @return array
+     */
+    public function getAnalysisReport() {
+        return [
+            'biggest_files' => $this->biggestFiles,
+            'mime_types' => $this->mimeTypes
+        ];
+    }
+
+    /**
+     * @param Node $item
+     */
+    public function pushToBiggestFilesIfNecessary($item) {
+        if (count($this->biggestFiles) < 10
+            || $item->getSize() > $this->biggestFiles[9]->getSize()
+        ) {
+            $this->biggestFiles[9] = $item;
+            usort($this->biggestFiles, function (Node $a, Node $b) {
+                return $a->getSize() < $b->getSize();
+            });
         }
     }
 
     /**
-     * @return array
+     * @param Node $item
      */
-    public function getFileMimeTypesInfo() {
-        return $this->fileMimeTypesInfo;
-    }
-
-    /**
-     * @param array $fileMimeTypesInfo
-     */
-    public function setFileMimeTypesInfo($fileMimeTypesInfo) {
-        $this->fileMimeTypesInfo = $fileMimeTypesInfo;
+    public function analyzeMimeType($item)
+    {
+        if (!isset($this->mimeTypes[$item->getMimetype()])) {
+            $this->mimeTypes[$item->getMimetype()] = $item->getSize();
+        } else {
+            $this->mimeTypes[$item->getMimetype()] += $item->getSize();
+        }
     }
 }
