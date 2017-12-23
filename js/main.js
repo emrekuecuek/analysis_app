@@ -8,9 +8,6 @@ $(document).ready(function () {
             OC.generateUrl('apps/analysis_app/getinfo',function( data ) {
             alert( "Data Loaded: " + data );
         }));
-
-       console.log("deneme");
-       console.log("deneme12");
        var chart = new CanvasJS.Chart("chartContainer", {
            animationEnabled: true,
             title: {
