@@ -38,10 +38,12 @@ class PageController extends Controller {
     public function index() {
         $templateResponse = new TemplateResponse(
             $this->appName,
-            'index',
-            $this->fileModel->getAnalysisReport()
+            'index'
         );
         return $templateResponse;
+    }
+    public function getInfo() {
+        return $this->fileModel->getAnalysisReport();
     }
 
 }
