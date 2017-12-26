@@ -35,6 +35,7 @@ class PageController extends Controller {
     }
 
     /**
+     * @NoCSRFRequired
      * @return TemplateResponse TemplateResponse
      */
     public function index() {
