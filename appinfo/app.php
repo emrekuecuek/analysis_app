@@ -4,8 +4,6 @@ namespace OCP\AppFramework\App;
 use OC\Core\Application;
 $app = new Application();
 
-
-
 \OC::$server->getNavigationManager()->add(function () {
     $urlGenerator = \OC::$server->getURLGenerator();
     return [
