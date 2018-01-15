@@ -19,5 +19,5 @@
        script('analysis_app','library');
        script('analysis_app','main');
     ?>
-    </div>
+</div>
 

@@ -8,6 +8,7 @@
 namespace OCA\Analysis_app\Controller;
 use OCA\Analysis_app\FileModel;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
 
@@ -48,10 +49,10 @@ class PageController extends Controller {
 
     /**
      * @NoCSRFRequired
-     * @return array
+     * @return JSONResponse
      */
     public function getInfo() {
-        return $this->fileModel->getAnalysisReport();
+        return new JSONResponse($this->fileModel->getAnalysisReport());
     }
 
 }
