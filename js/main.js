@@ -10,12 +10,10 @@ $(document).ready(function () {
            // var report = $.map(data, function(el) { return el });
             var allMimeTypes = [];
             var i = 0;
-            console.log(data.mime_types);
-            for (mimeTypes in data.mime_types){
-                allMimeTypes[i] = {y: data.mime_types[mimeTypes], label: data.mime_types};
+            $.each(data.mime_types, function(key, value) {
+                allMimeTypes[i] = {y: value, label: key};
                 i++;
-            }
-
+            });
 
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
@@ -27,11 +25,9 @@ $(document).ready(function () {
                     startAngle: 240,
                     yValueFormatString: "##0.00\"%\"",
                     indexLabel: "{label} {y}",
-                    dataPoints: allMimeTypes,
-
+                    dataPoints: allMimeTypes
                 }]
             });
-
                return chart.render();
             });
 
