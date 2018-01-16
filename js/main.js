@@ -7,33 +7,59 @@ $(document).ready(function () {
              * @var object data
              */
             OC.generateUrl('/apps/analysis_app/getinfo'), function (data) {
-           // var report = $.map(data, function(el) { return el });
-            var allMimeTypes = [];
-            var i = 0;
-            $.each(data.mime_types, function(key, value) {
-                allMimeTypes[i] = {y: value, label: key};
-                i++;
+                var allMimeTypes = [], i=0,totalMimeTypeSize=0;
+                $.each(data.mime_types, function (key,value) {
+                    totalMimeTypeSize = +totalMimeTypeSize + +value;
+                });
+                $.each(data.mime_types, function (key,value) {
+                    data.mime_types[key] = (value/totalMimeTypeSize)*100;
+                });
+                $.each(data.mime_types, function(key, value) {
+                    allMimeTypes[i] = {value: value, name: key};
+                    i++;
+                });
+                var mimeTypesChart = echarts.init(document.getElementById('chartContainer'));
+                var option = {
+                    title : {
+                        text: 'Dosya Tipi Yuzdeleri',
+                        subtext: 'Hangi dosya uzantisina sahip dosyalar Kovan\'ımda yuzdelik olarak ne kadar yer tutuyor?',
+                        x:'center'
+                    },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: allMimeTypes
+                    },
+                    series : [
+                        {
+                            name: '',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['50%', '60%'],
+                            data: allMimeTypes,
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                mimeTypesChart.setOption(option);
+
+                console.log(data.biggest_files);
+
+
+
+
             });
-
-            var chart = new CanvasJS.Chart("chartContainer", {
-                animationEnabled: true,
-                title: {
-                    text: "Dosya Yüzdeleri"
-                },
-                data: [{
-                    type: "pie",
-                    startAngle: 240,
-                    yValueFormatString: "##0.00\"%\"",
-                    indexLabel: "{label} {y}",
-                    dataPoints: allMimeTypes
-                }]
-            });
-               return chart.render();
-            });
-
-    }
-
-
+        }
 });
 
 
