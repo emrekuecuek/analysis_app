@@ -1,22 +1,6 @@
 <?php
-echo "<div id='chartContainer'>";
-
-
-    foreach ($_['biggest_files'] as $file) {
-        /***
-         * @var \OCP\Files\Node $file
-         */
-        echo $file->getPath()." ".$file->getSize(). $file->getMimetype() ."<br>";
-
-    }
-    script('analysis_app','library');
-    script('analysis_app','main');
-    echo print_r($_['mime_types']);
-
-    echo "</div>";
-
-
-
-
-
-
+script('analysis_app','echarts.min');
+script('analysis_app','main');
+?>
+<div id="chartContainer" style="width: 100%;height: 100%;"></div>
+<div id="listContainer" style="width: 100%;height: 100%;"></div>

@@ -7,14 +7,19 @@ use OCP\Files\Node;
 
 class FileModel {
     /**
-     * @var Node[] $biggestFiles
+     * @var Node[] $biggestFileNodes
      */
-    private $biggestFiles;
+    private $biggestFileNodes;
 
     /**
      * @var array $mimeTypes
      */
     private $mimeTypes;
+
+    /**
+     * @var array $mimeTypes
+     */
+    private $biggestFiles;
 
     /**
      * FileModel constructor.
@@ -28,10 +33,10 @@ class FileModel {
     public function analyze($currentDirectory) {
         foreach ($currentDirectory->search('') as $item) {
             if ($item instanceof Folder) {
-                $this->analyze($item);
                 continue;
             }
             $this->pushToBiggestFilesIfNecessary($item);
+            $this->convertBiggestFilesNodeToArray();
             $this->analyzeMimeType($item);
         }
     }
@@ -49,14 +54,21 @@ class FileModel {
      * @param Node $item
      */
     public function pushToBiggestFilesIfNecessary($item) {
-        if (count($this->biggestFiles) < 10
-            || $item->getSize() > $this->biggestFiles[9]->getSize()
+        if (count($this->biggestFileNodes) < 10
+            || $item->getSize() > $this->biggestFileNodes[9]->getSize()
         ) {
-            $this->biggestFiles[9] = $item;
-            usort($this->biggestFiles, function (Node $a, Node $b) {
+            $this->biggestFileNodes[9] = $item;
+            usort($this->biggestFileNodes, function (Node $a, Node $b) {
                 return $a->getSize() < $b->getSize();
             });
         }
+    }
+
+    public function convertBiggestFilesNodeToArray() {
+        foreach ($this->biggestFileNodes as $node) {
+            $this->biggestFiles[$node->getName()] = $node->getSize();
+        }
+        arsort($this->biggestFiles);
     }
 
     /**

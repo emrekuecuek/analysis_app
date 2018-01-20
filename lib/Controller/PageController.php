@@ -8,8 +8,11 @@
 namespace OCA\Analysis_app\Controller;
 use OCA\Analysis_app\FileModel;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
+
+
 class PageController extends Controller {
     /**
      * @var FileModel $fileModel;
@@ -33,15 +36,25 @@ class PageController extends Controller {
     }
 
     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
      * @return TemplateResponse TemplateResponse
      */
     public function index() {
         $templateResponse = new TemplateResponse(
             $this->appName,
-            'index',
-            $this->fileModel->getAnalysisReport()
+            'index'
         );
         return $templateResponse;
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @return JSONResponse
+     */
+    public function getInfo() {
+        return new JSONResponse($this->fileModel->getAnalysisReport());
     }
 
 }
