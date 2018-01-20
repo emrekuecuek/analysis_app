@@ -36,6 +36,7 @@ class PageController extends Controller {
     }
 
     /**
+     * @NoAdminRequired
      * @NoCSRFRequired
      * @return TemplateResponse TemplateResponse
      */
@@ -48,6 +49,7 @@ class PageController extends Controller {
     }
 
     /**
+     * @NoAdminRequired
      * @NoCSRFRequired
      * @return JSONResponse
      */

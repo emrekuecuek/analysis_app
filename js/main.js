@@ -52,12 +52,6 @@ $(document).ready(function () {
                     ]
                 };
                 mimeTypesChart.setOption(option);
-
-                console.log(data.biggest_files);
-
-
-
-
             });
         }
 });
