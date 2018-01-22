@@ -5,6 +5,8 @@ $(document).ready(function () {
         var analysis_info = $.get(
             /**
              * @var object data
+             * @var FileModel data.biggest_files
+             * @var FileModel data.mime_types
              */
             OC.generateUrl('/apps/analysis_app/getinfo'), function (data) {
                 var allMimeTypes = [], i=0,totalMimeTypeSize=0;
@@ -18,6 +20,7 @@ $(document).ready(function () {
                     allMimeTypes[i] = {value: value, name: key};
                     i++;
                 });
+
                 var mimeTypesChart = echarts.init(document.getElementById('chartContainer'));
                 var option = {
                     title : {
@@ -51,7 +54,9 @@ $(document).ready(function () {
                         }
                     ]
                 };
+                console.log(data.biggest_files);
                 mimeTypesChart.setOption(option);
+
             });
         }
 });
