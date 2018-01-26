@@ -54,8 +54,18 @@ $(document).ready(function () {
                         }
                     ]
                 };
-                console.log(data.biggest_files);
                 mimeTypesChart.setOption(option);
+                window.addEventListener('resize', function(event){
+                    mimeTypesChart.resize();
+                });
+                var listTable = document.getElementById('listTableData');
+                $.each(data.biggest_files, function (key, value) {
+                    var biggestFileRow = listTable.insertRow(0);
+                    var biggestFileName = biggestFileRow.insertCell(0);
+                    var biggestFileSize = biggestFileRow.insertCell(1);
+                    biggestFileName.innerHTML = key;
+                    biggestFileSize.innerHTML = value;
+                });
 
             });
         }

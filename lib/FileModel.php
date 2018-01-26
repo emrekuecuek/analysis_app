@@ -4,6 +4,7 @@ namespace OCA\Analysis_app;
 
 use OCP\Files\Folder;
 use OCP\Files\Node;
+use function Sabre\VObject\write;
 
 class FileModel {
     /**
@@ -17,7 +18,7 @@ class FileModel {
     private $mimeTypes;
 
     /**
-     * @var array $mimeTypes
+     * @var array $biggestFiles
      */
     private $biggestFiles;
 
@@ -36,9 +37,9 @@ class FileModel {
                 continue;
             }
             $this->pushToBiggestFilesIfNecessary($item);
-            $this->convertBiggestFilesNodeToArray();
             $this->analyzeMimeType($item);
         }
+        $this->convertBiggestFilesNodeToArray();
     }
     /**
      * @return array
