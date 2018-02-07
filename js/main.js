@@ -58,13 +58,15 @@ $(document).ready(function () {
                 window.addEventListener('resize', function(event){
                     mimeTypesChart.resize();
                 });
+                i=0;
                 var listTable = document.getElementById('listTableData');
                 $.each(data.biggest_files, function (key, value) {
-                    var biggestFileRow = listTable.insertRow(0);
+                    var biggestFileRow = listTable.insertRow(i);
                     var biggestFileName = biggestFileRow.insertCell(0);
                     var biggestFileSize = biggestFileRow.insertCell(1);
                     biggestFileName.innerHTML = key;
                     biggestFileSize.innerHTML = value;
+                    i++;
                 });
 
             });
