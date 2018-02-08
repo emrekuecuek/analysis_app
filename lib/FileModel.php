@@ -17,7 +17,7 @@ class FileModel {
     private $mimeTypes;
 
     /**
-     * @var array $mimeTypes
+     * @var array $biggestFiles
      */
     private $biggestFiles;
 
@@ -36,9 +36,9 @@ class FileModel {
                 continue;
             }
             $this->pushToBiggestFilesIfNecessary($item);
-            $this->convertBiggestFilesNodeToArray();
             $this->analyzeMimeType($item);
         }
+        $this->convertBiggestFilesNodeToArray();
     }
     /**
      * @return array
