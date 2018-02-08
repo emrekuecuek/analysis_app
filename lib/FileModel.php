@@ -4,7 +4,6 @@ namespace OCA\Analysis_app;
 
 use OCP\Files\Folder;
 use OCP\Files\Node;
-use function Sabre\VObject\write;
 
 class FileModel {
     /**
