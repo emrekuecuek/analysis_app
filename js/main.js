@@ -24,8 +24,8 @@ $(document).ready(function () {
                 var mimeTypesChart = echarts.init(document.getElementById('chartContainer'));
                 var option = {
                     title : {
-                        text: 'Dosya Tipi Yuzdeleri',
-                        subtext: 'Hangi dosya uzantisina sahip dosyalar Kovan\'ımda yuzdelik olarak ne kadar yer tutuyor?',
+                        text: 'Dosya Tipi Yüzdeleri',
+                        subtext: 'Hangi dosya uzantısına sahip dosyalar Kovan\'ımda yüzdelik olarak ne kadar yer tutuyor?',
                         x:'center'
                     },
                     tooltip : {
