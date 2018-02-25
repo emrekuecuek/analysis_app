@@ -1,0 +1,44 @@
+language: php
+php:
+  - 7.1
+  - 7.2
+
+env:
+  global:
+    - CORE_BRANCH=master
+  matrix:
+  - DB=sqlite
+
+branches:
+  only:
+    - master
+
+install:
+  - wget https://raw.githubusercontent.com/owncloud/administration/master/travis-ci/before_install.sh
+  - bash ./before_install.sh analysis_app $CORE_BRANCH $DB
+  - cd ../core
+  - php occ app:enable analysis_app
+
+script:
+  # execute unit tests
+  - cd apps/analysis_app/tests
+  - ../../../lib/composer/phpunit/phpunit/phpunit --configuration phpunit.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+
+after_failure:
+    - cat ../../data/owncloud.log
+
+matrix:
+  include:
+    - php: 7.1
+      env: DB=mysql
+    - php: 7.2
+      env: DB=mysql
+    - php: 7.1
+      env: DB=pgsql
+    - php: 7.2
+      env: DB=pgsql
+  fast_finish: true
