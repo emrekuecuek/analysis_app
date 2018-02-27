@@ -8,7 +8,7 @@ use Test\TestCase;
 
 class PageControllerTest extends TestCase {
     public function testTrueIsTrue() {
-        $foo = true;
+        $foo = false;
         $this->assertTrue($foo);
     }
 }
