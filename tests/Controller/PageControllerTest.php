@@ -3,41 +3,31 @@
 namespace OCA\Analysis_App\Tests\Controller;
 
 use OCA\Analysis_app\Controller\PageController;
+use OCP\IRequest;
 use OCA\Analysis_app\FileModel;
-use OCP\AppFramework\Http\TemplateResponse;
 use Test\TestCase;
 
 
 class PageControllerTest extends TestCase {
-    /**
-     * @params $appName
-     * @params $fileModel
-     * @params $request
-     */
+    /** @var string $appName */
     private $appName;
+    /** @var FileModel | \PHPUnit_Framework_MockObject_MockObject */
     private $fileModel;
+    /** @var IRequest | \PHPUnit_Framework_MockObject_MockObject */
     private $request;
-    private $expectedHtml;
-
+    /** @var PageController $templateObj*/
+    private $templateObj;
 
     protected function setUp() {
         parent::setUp();
-        $this->appName = $this->createMock('\OCA\Analysis_app\Controller\PageController');
+        $this->appName = 'analysis_app';
         $this->request = $this->createMock('\OCP\IRequest');
         $this->fileModel = $this->createMock('\OCA\Analysis_app\FileModel');
-        $this->expectedHtml = $this->getMockBuilder('OCP\AppFramework\Http\TemplateResponse')
-            ->disableOriginalConstructor()
-            ->setConstructorArgs(array($this->appName, 'index'));
+        $this->templateObj = new PageController($this->appName, $this->request, $this->fileModel);
     }
 
     public function testIndex() {
-
-        $templateObj = new PageController($this->appName, $this->request, $this->fileModel);
-        $this->assertTemplate($this->expectedHtml, $templateObj->index());
-
-
-
-
+        $this->assertEquals(200,$this->templateObj->index()->getStatus());
     }
 
     public function testGetInfo() {
