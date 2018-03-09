@@ -23,6 +23,8 @@ class PageControllerTest extends TestCase {
         $this->appName = 'analysis_app';
         $this->request = $this->createMock('\OCP\IRequest');
         $this->fileModel = $this->createMock('\OCA\Analysis_app\FileModel');
+        $this->fileModel->expects($this->any())->method('getAnalysisReport')
+            ->willReturn(array());
         $this->templateObj = new PageController($this->appName, $this->request, $this->fileModel);
     }
 
@@ -31,6 +33,6 @@ class PageControllerTest extends TestCase {
     }
 
     public function testGetInfo() {
-
+        $this->assertJson(json_encode($this->templateObj->getInfo()));
     }
 }
