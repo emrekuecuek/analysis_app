@@ -3,6 +3,7 @@
 namespace OCA\Analysis_App\Tests;
 
 use OCA\Analysis_app\FileModel;
+use OCP\Files\Folder;
 use Test\TestCase;
 
 class FileModelTest extends TestCase {
@@ -13,8 +14,7 @@ class FileModelTest extends TestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->currentFolderMock = $this->getMockBuilder('OCP\Files\Folder')
-            ->getMock();
+        $this->currentFolderMock = $this->createMock(Folder::class);
         $this->fileModelObject = new FileModel($this->currentFolderMock);
     }
 
