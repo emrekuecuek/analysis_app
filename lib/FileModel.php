@@ -11,7 +11,7 @@ class FileModel {
     /**
      * @var array $biggestFiles
      */
-    private $biggestFiles;
+    private $biggestFiles = [];
 
 	/**
 	 * @var array $mimeTypes
@@ -30,7 +30,7 @@ class FileModel {
 	 */
 	public function __construct($userFolder) {
 		$this->userFolder = $userFolder;
-		$this->analyze($userFolder);
+
 	}
 	/**
 	 * @param Folder $currentDirectory
@@ -41,8 +41,10 @@ class FileModel {
 				continue;
 			}
 			$this->pushToBiggestFiles($item);
-			arsort($this->biggestFiles);
 			$this->analyzeMimeType($item);
+			usort($this->biggestFiles, function($a, $b) {
+			    return $a[1] < $b[1];
+            });
 		}
 
 	}
@@ -50,8 +52,13 @@ class FileModel {
 	 * @return array
 	 */
 	public function getAnalysisReport() {
+        $this->analyze($this->userFolder);
+        $biggestFilesSorted = [];
+        for ($i = 0; $i<10; $i++) {
+            $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
+        }
 	    return [
-			'biggest_files' => $this->biggestFiles,
+			'biggest_files' => $biggestFilesSorted,
 			'mime_types' => $this->mimeTypes
 		];
 	}
@@ -60,7 +67,7 @@ class FileModel {
 	 * @param Node $item
 	 */
 	public function pushToBiggestFiles($item) {
-	    $this->biggestFiles[$item->getName()] = $item->getSize();
+	    array_push($this->biggestFiles, [$item->getName(),$item->getSize()]);
 	}
 
 	/**
