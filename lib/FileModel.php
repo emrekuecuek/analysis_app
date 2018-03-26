@@ -4,7 +4,6 @@ namespace OCA\Analysis_app;
 
 use OCP\Files\Folder;
 use OCP\Files\Node;
-use OCP\Util;
 
 class FileModel {
 
@@ -49,14 +48,24 @@ class FileModel {
 
 	}
 	/**
+     * @var array $biggestFilesSorted
 	 * @return array
 	 */
 	public function getAnalysisReport() {
         $this->analyze($this->userFolder);
         $biggestFilesSorted = [];
-        for ($i = 0; $i<10; $i++) {
-            $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
+        if (sizeof($this->biggestFiles)<10) {
+            for ($i = 0; $i<sizeof($this->biggestFiles) ; $i++) {
+                $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
+            }
         }
+
+        else {
+            for ($i = 0; $i<2; $i++) {
+                $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
+            }
+        }
+
 	    return [
 			'biggest_files' => $biggestFilesSorted,
 			'mime_types' => $this->mimeTypes
@@ -73,8 +82,7 @@ class FileModel {
 	/**
 	 * @param Node $item
 	 */
-	public function analyzeMimeType($item)
-	{
+	public function analyzeMimeType($item) {
 		if (!isset($this->mimeTypes[$item->getMimetype()])) {
 			$this->mimeTypes[$item->getMimetype()] = $item->getSize();
 		} else {
