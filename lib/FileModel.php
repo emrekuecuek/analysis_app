@@ -61,7 +61,7 @@ class FileModel {
         }
 
         else {
-            for ($i = 0; $i<2; $i++) {
+            for ($i = 0; $i<10; $i++) {
                 $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
             }
         }
