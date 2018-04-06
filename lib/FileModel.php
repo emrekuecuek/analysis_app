@@ -41,9 +41,7 @@ class FileModel {
 			}
 			$this->pushToBiggestFiles($item);
 			$this->analyzeMimeType($item);
-			usort($this->biggestFiles, function($a, $b) {
-			    return $a[1] < $b[1];
-            });
+
 		}
 
 	}
@@ -54,17 +52,20 @@ class FileModel {
 	public function getAnalysisReport() {
         $this->analyze($this->userFolder);
         $biggestFilesSorted = [];
-        if (sizeof($this->biggestFiles)<10) {
-            for ($i = 0; $i<sizeof($this->biggestFiles) ; $i++) {
-                $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
-            }
+        $fileNumberToBeSorted = 10;
+
+        usort($this->biggestFiles, function($a, $b) {
+            return $a[1] < $b[1];
+        });
+
+        if (count($this->biggestFiles)<$fileNumberToBeSorted) {
+            $fileNumberToBeSorted = count($this->biggestFiles);
         }
 
-        else {
-            for ($i = 0; $i<10; $i++) {
-                $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
-            }
+        for ($i = 0; $i<$fileNumberToBeSorted; $i++) {
+            $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
         }
+
 
 	    return [
 			'biggest_files' => $biggestFilesSorted,
@@ -72,14 +73,7 @@ class FileModel {
 		];
 	}
 
-	/**
-	 * @param Node $item
-	 */
-	public function pushToBiggestFiles($item) {
-	    array_push($this->biggestFiles, [$item->getName(),$item->getSize()]);
-	}
-
-	/**
+    /**
 	 * @param Node $item
 	 */
 	public function analyzeMimeType($item) {
@@ -89,4 +83,11 @@ class FileModel {
 			$this->mimeTypes[$item->getMimetype()] += $item->getSize();
 		}
 	}
+
+    /**
+     * @param Node $item
+     */
+    public function pushToBiggestFiles($item) {
+        array_push($this->biggestFiles, [$item->getName(),$item->getSize()]);
+    }
 }

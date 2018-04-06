@@ -48,6 +48,12 @@ class FileModelTest extends TestCase {
             ->will($this->returnValue([$this->nodeMock1, $this->nodeMock2]));
         $this->assertArrayHasKey('biggest_files',$this->fileModelObject->getAnalysisReport());
         $this->assertArrayHasKey('mime_types',$this->fileModelObject->getAnalysisReport());
+
+        //Since names of biggest_files are stored as key values as in an associative array, I thought it would be better to test it with assertArrayHasKey.
+
+        $this->assertArrayHasKey($this->nodeMock1->getName(), $this->fileModelObject->getAnalysisReport()['biggest_files']);
+        $this->assertEquals(20, $this->fileModelObject->getAnalysisReport()['biggest_files']['']);
+
     }
 
 
