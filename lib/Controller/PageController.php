@@ -54,7 +54,7 @@ class PageController extends Controller {
      * @return JSONResponse
      */
     public function getInfo() {
-        return new JSONResponse($this->fileModel->getAnalysisReport());
+        return new JSONResponse($this->fileModel->getAnalysisReport(10));
     }
 
 }

@@ -6,20 +6,16 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 
 class FileModel {
-	/**
-	 * @var Node[] $biggestFileNodes
-	 */
-	private $biggestFileNodes;
+
+    /**
+     * @var array $biggestFiles
+     */
+    private $biggestFiles = [];
 
 	/**
 	 * @var array $mimeTypes
 	 */
 	private $mimeTypes;
-
-	/**
-	 * @var array $biggestFiles
-	 */
-	private $biggestFiles;
 
 	/**
 	 * @var Folder $userFolder
@@ -33,7 +29,7 @@ class FileModel {
 	 */
 	public function __construct($userFolder) {
 		$this->userFolder = $userFolder;
-		$this->analyze($userFolder);
+
 	}
 	/**
 	 * @param Folder $currentDirectory
@@ -43,51 +39,53 @@ class FileModel {
 			if ($item instanceof Folder) {
 				continue;
 			}
-			$this->pushToBiggestFilesIfNecessary($item);
+			$this->pushToBiggestFiles($item);
 			$this->analyzeMimeType($item);
 		}
-		$this->convertBiggestFilesNodeToArray();
+
 	}
 	/**
+     * @var array $biggestFilesSorted
 	 * @return array
 	 */
-	public function getAnalysisReport() {
-		return [
-			'biggest_files' => $this->biggestFiles,
+	public function getAnalysisReport($fileNumberToBeSorted) {
+        $this->analyze($this->userFolder);
+        $biggestFilesSorted = [];
+
+        usort($this->biggestFiles, function($a, $b) {
+            return $a[1] < $b[1];
+        });
+
+        if (count($this->biggestFiles)<$fileNumberToBeSorted) {
+            $fileNumberToBeSorted = count($this->biggestFiles);
+        }
+
+        for ($i = 0; $i<$fileNumberToBeSorted; $i++) {
+            $biggestFilesSorted[$this->biggestFiles[$i][0]] = $this->biggestFiles[$i][1];
+        }
+
+
+	    return [
+			'biggest_files' => $biggestFilesSorted,
 			'mime_types' => $this->mimeTypes
 		];
 	}
 
-	/**
+    /**
 	 * @param Node $item
 	 */
-	public function pushToBiggestFilesIfNecessary($item) {
-		if (count($this->biggestFileNodes) < 10
-			|| $item->getSize() > $this->biggestFileNodes[9]->getSize()
-		) {
-			$this->biggestFileNodes[9] = $item;
-			usort($this->biggestFileNodes, function (Node $a, Node $b) {
-				return $a->getSize() < $b->getSize();
-			});
-		}
-	}
-
-	public function convertBiggestFilesNodeToArray() {
-		foreach ($this->biggestFileNodes as $node) {
-			$this->biggestFiles[$node->getName()] = $node->getSize();
-		}
-		arsort($this->biggestFiles);
-	}
-
-	/**
-	 * @param Node $item
-	 */
-	public function analyzeMimeType($item)
-	{
+	public function analyzeMimeType($item) {
 		if (!isset($this->mimeTypes[$item->getMimetype()])) {
 			$this->mimeTypes[$item->getMimetype()] = $item->getSize();
 		} else {
 			$this->mimeTypes[$item->getMimetype()] += $item->getSize();
 		}
 	}
+
+    /**
+     * @param Node $item
+     */
+    public function pushToBiggestFiles($item) {
+        array_push($this->biggestFiles, [$item->getName(),$item->getSize()]);
+    }
 }
