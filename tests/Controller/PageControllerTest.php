@@ -16,8 +16,6 @@ class PageControllerTest extends TestCase {
     private $fileModel;
     /** @var IRequest | \PHPUnit_Framework_MockObject_MockObject */
     private $request;
-    /** @var  JSONResponse | \PHPUnit_Framework_MockObject_MockObject */
-    private $jsonResponseMock;
     /** @var PageController $pageControllerObject */
     private $pageControllerObject;
 
@@ -26,7 +24,6 @@ class PageControllerTest extends TestCase {
         $this->appName = 'analysis_app';
         $this->request = $this->createMock('\OCP\IRequest');
         $this->fileModel = $this->createMock('\OCA\Analysis_app\FileModel');
-        $this->jsonResponseMock = $this->createMock('OCP\AppFramework\Http\JSONResponse');
         $this->fileModel->expects($this->any())->method('getAnalysisReport')
             ->willReturn(array());
         $this->pageControllerObject = new PageController($this->appName, $this->request, $this->fileModel);

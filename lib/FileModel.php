@@ -41,7 +41,6 @@ class FileModel {
 			}
 			$this->pushToBiggestFiles($item);
 			$this->analyzeMimeType($item);
-
 		}
 
 	}
@@ -49,10 +48,9 @@ class FileModel {
      * @var array $biggestFilesSorted
 	 * @return array
 	 */
-	public function getAnalysisReport() {
+	public function getAnalysisReport($fileNumberToBeSorted) {
         $this->analyze($this->userFolder);
         $biggestFilesSorted = [];
-        $fileNumberToBeSorted = 10;
 
         usort($this->biggestFiles, function($a, $b) {
             return $a[1] < $b[1];

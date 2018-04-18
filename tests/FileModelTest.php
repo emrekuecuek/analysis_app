@@ -19,48 +19,43 @@ class FileModelTest extends TestCase {
 
     protected function setUp() {
         parent::setUp();
-        $this->nodeMock1 = $this->getMockBuilder(Node::class)
+        $this->nodeMock1 = $this->getMockBuilder(Node::class)->setMethods([])
             ->getMock();
-        $this->nodeMock2 = $this->getMockBuilder(Node::class)
+        $this->nodeMock2 = $this->getMockBuilder(Node::class)->setMethods([])
             ->getMock();
         $this->currentFolderMock = $this->getMockBuilder(Folder::class)
             ->getMock();
+        $this->nodeMock1->expects($this->any())
+            ->method('getName')->will($this->returnValue('nodemock1.pdf'));
+        $this->nodeMock1->expects($this->any())
+            ->method('getSize')->will($this->returnValue(10));
+        $this->nodeMock1->expects($this->any())
+            ->method('getMimeType')->will($this->returnValue('application/pdf'));
+        $this->nodeMock2->expects($this->any())
+            ->method('getName')->will($this->returnValue('nodemock2.png'));
+        $this->nodeMock2->expects($this->any())
+            ->method('getSize')->will($this->returnValue(20));
+        $this->nodeMock2->expects($this->any())
+            ->method('getMimeType')->will($this->returnValue('image/png'));
+        $this->currentFolderMock->expects($this->any())
+            ->method('search')
+            ->will($this->returnValue([$this->nodeMock1, $this->nodeMock2]));
         $this->fileModelObject = new FileModel($this->currentFolderMock);
     }
 
     public function testAnalyze() {
-        $this->nodeMock1->expects($this->any())
-            ->method('getName')->will($this->returnValue('nodemock1.pdf'));
-        $this->currentFolderMock->expects($this->any())
-            ->method('search')
-            ->will($this->returnValue([$this->nodeMock1, $this->nodeMock2]));
         $this->fileModelObject->analyze($this->currentFolderMock);
     }
 
     public function testGetAnalysisReport() {
-        $this->nodeMock1->expects($this->any())->method('getName')
-            ->will($this->returnValue('nodeMock1.pdf'));
-        $this->nodeMock2->expects($this->any())->method('getSize')
-            ->will($this->returnValue(20));
-        $this->currentFolderMock
-            ->expects($this->any())
-            ->method('search')
-            ->will($this->returnValue([$this->nodeMock1, $this->nodeMock2]));
-        $this->assertArrayHasKey('biggest_files',$this->fileModelObject->getAnalysisReport());
-        $this->assertArrayHasKey('mime_types',$this->fileModelObject->getAnalysisReport());
-
-        //Since names of biggest_files are stored as key values as in an associative array, I thought it would be better to test it with assertArrayHasKey.
-
-        $this->assertArrayHasKey($this->nodeMock1->getName(), $this->fileModelObject->getAnalysisReport()['biggest_files']);
-        $this->assertEquals(20, $this->fileModelObject->getAnalysisReport()['biggest_files']['']);
-
+        $expectedArray = [
+            'biggest_files' => ['nodemock2.png' => 20, 'nodemock1.pdf' => 10],
+            'mime_types' => ['application/pdf' => 10, 'image/png' => 20]
+        ];
+        $this->assertEquals($expectedArray, $this->fileModelObject->getAnalysisReport(2));
     }
-
 
     public function testPushToBiggestFile() {
-        $this->nodeMock1->expects($this->any())->method('getName')
-            ->will($this->returnValue('nodeMock1.pdf'));
         $this->fileModelObject->pushToBiggestFiles($this->nodeMock1);
     }
-
 }
